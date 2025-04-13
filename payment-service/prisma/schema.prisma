@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      =  env("DATABASE_URL")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDING
+  REFUNDED
+}
+
+model PaymentDetails {
+  id            Int     @id @default(autoincrement())
+  amount        Float
+  status        PaymentStatus @default(PENDING)
+  issuedAt      DateTime @default(now())
+}
+
+model Seed {
+  id            Int     @id
+  date          DateTime @default(now())
+}

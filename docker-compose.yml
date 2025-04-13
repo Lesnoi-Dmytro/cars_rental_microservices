@@ -1,0 +1,152 @@
+services:
+  auth-service:
+    image: auth-service
+    build:
+      context: auth-service/.
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://root:password@auth-postgres:5432/mydb
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+    depends_on:
+      - auth-postgres
+      - rabbitmq
+    networks:
+      - shared-network
+
+  auth-postgres:
+    image: postgres:17.4-alpine3.21
+    container_name: auth-postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth-postgres-data:/var/lib/postgresql/data
+    networks:
+      - shared-network
+
+  cars-service:
+    image: cars-service
+    build:
+      context: cars-service/.
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=postgresql://root:password@cars-postgres:5432/mydb
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+      - GATEWAY_URL=http://gateway:3000
+    depends_on:
+      - cars-postgres
+      - rabbitmq
+    networks:
+      - shared-network
+
+  cars-postgres:
+    image: postgres:17.4-alpine3.21
+    container_name: cars-postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5434:5432"
+    volumes:
+      - cars-postgres-data:/var/lib/postgresql/data
+    networks:
+      - shared-network
+
+  reservations-service:
+    image: reservations-service
+    build:
+      context: reservations-service/.
+    ports:
+      - "3003:3003"
+    environment:
+      - DATABASE_URL=postgresql://root:password@reservations-postgres:5432/mydb
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+      - GATEWAY_URL=http://gateway:3000
+    depends_on:
+      - reservations-postgres
+      - rabbitmq
+    networks:
+      - shared-network
+
+  reservations-postgres:
+    image: postgres:17.4-alpine3.21
+    container_name: reservations-postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5435:5432"
+    volumes:
+      - reservations-postgres-data:/var/lib/postgresql/data
+    networks:
+      - shared-network
+
+  payment-service:
+    image: payment-service
+    build:
+      context: payment-service/.
+    ports:
+      - "3004:3004"
+    environment:
+      - DATABASE_URL=postgresql://root:password@payment-postgres:5432/mydb
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+    depends_on:
+      - payment-postgres
+      - rabbitmq
+    networks:
+      - shared-network
+
+  payment-postgres:
+    image: postgres:17.4-alpine3.21
+    container_name: payment-postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5436:5432"
+    volumes:
+      - payment-postgres-data:/var/lib/postgresql/data
+    networks:
+      - shared-network
+
+  gateway:
+    image: gateway
+    build:
+      context: gateway/.
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - CARS_SERVICE_URL=http://cars-service:3002
+      - RESERVATIONS_SERVICE_URL=http://reservations-service:3003
+      - PAYMENT_SERVICE_URL=http://payment-service:3004
+    networks:
+      - shared-network
+
+  rabbitmq:
+    image: rabbitmq:4.1.0-rc.1-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - shared-network
+
+volumes:
+  auth-postgres-data:
+  cars-postgres-data:
+  reservations-postgres-data:
+  payment-postgres-data:
+
+networks:
+  shared-network:

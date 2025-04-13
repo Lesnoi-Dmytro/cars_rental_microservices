@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CarBrand {
+  id            Int     @id @default(autoincrement())
+  name          String
+  cars          Car[]
+}
+
+enum FUEL_TYPE {
+  GASOLINE
+  PETROL
+  DIESEL
+  ELECTRIC
+  HYBRID
+}
+
+model CarPhoto {
+  id            Int     @id @default(autoincrement())
+  carId         Int
+  car           Car     @relation(fields: [carId], references: [id])
+  photoUrl      String
+}
+
+model Car {
+  id            Int     @id @default(autoincrement())
+  name          String
+  description   String
+  brandId       Int
+  brand         CarBrand @relation(fields: [brandId], references: [id])
+  year          Int
+  color         String
+  mileage       Int
+  fuelType      FUEL_TYPE
+  isAvailable   Boolean @default(true)
+  pricePerDay   Float
+
+  photos        CarPhoto[]
+}
+
+model Seed {
+  id            Int     @id
+  date          DateTime @default(now())
+}

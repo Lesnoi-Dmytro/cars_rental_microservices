@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int     @id
+  name          String
+  email         String  @unique
+  phoneNum      String? @db.Char(13)
+  passportId    String?
+
+  reservations  Reservation[]
+  damageReports DamageReport[]
+}
+
+model Car {
+  id            Int     @id
+  name          String
+  description   String
+  pricePerDay   Float
+
+  reservations  Reservation[]
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  PAYED
+  REFUNDING
+  DAMAGED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDING
+  REFUNDED
+}
+
+model Reservation {
+  id            Int     @id @default(autoincrement())
+  userId        Int
+  user          User @relation(fields: [userId], references: [id])
+  carId         Int
+  car           Car     @relation(fields: [carId], references: [id])
+
+  startDate     DateTime
+  duration      Int
+  price         Float
+  status        ReservationStatus @default(PENDING)
+  issuedAt      DateTime  @default(now())
+  paymentStatus PaymentStatus?
+  paymentId     Int?
+  
+  damageReport  DamageReport?
+}
+
+model DamageReport {
+  id            Int     @id @default(autoincrement())
+  
+  createdBy     Int
+  reporter      User    @relation(fields: [createdBy], references: [id])
+
+  reservationId Int     @unique
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  description   String
+  price         Float
+  date          DateTime
+  photos        DamagePhoto[]
+  paymentStatus PaymentStatus?
+  paymentId     Int?
+}
+
+model DamagePhoto {
+  id            Int     @id @default(autoincrement())
+  damageReportId Int
+  damageReport DamageReport @relation(fields: [damageReportId], references: [id])
+  photoUrl     String
+}
+
+model Seed {
+  id            Int     @id
+  date          DateTime @default(now())
+}
