@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\Tools\Kompose\kompose.exe convert -f docker-compose.yml
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: reservations-service
+  name: reservations-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: reservations-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\Tools\Kompose\kompose.exe convert -f docker-compose.yml
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: reservations-service
+    spec:
+      containers:
+        - env:
+            - name: DATABASE_URL
+              value: postgresql://root:password@reservations-postgres:5435/mydb
+            - name: GATEWAY_URL
+              value: http://gateway:3000
+            - name: RABBITMQ_URL
+              value: amqp://user:password@rabbitmq:5672
+          image: reservations-service
+          name: reservations-service
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3003
+              protocol: TCP
+      restartPolicy: Always

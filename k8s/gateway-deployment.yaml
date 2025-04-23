@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\Tools\Kompose\kompose.exe convert -f docker-compose.yml
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: gateway
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: gateway
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\Tools\Kompose\kompose.exe convert -f docker-compose.yml
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: gateway
+    spec:
+      containers:
+        - env:
+            - name: AUTH_SERVICE_URL
+              value: http://auth-service:3001
+            - name: CARS_SERVICE_URL
+              value: http://cars-service:3002
+            - name: PAYMENT_SERVICE_URL
+              value: http://payment-service:3004
+            - name: RESERVATIONS_SERVICE_URL
+              value: http://reservations-service:3003
+          image: gateway
+          name: gateway
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+      restartPolicy: Always
