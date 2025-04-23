@@ -8,6 +8,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://root:password@auth-postgres:5432/mydb
       - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - auth-postgres
       - rabbitmq
@@ -139,6 +141,13 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - shared-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
     networks:
       - shared-network
 

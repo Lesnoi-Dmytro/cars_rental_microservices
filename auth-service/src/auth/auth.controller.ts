@@ -5,6 +5,8 @@ import {
   Get,
   HttpCode,
   Post,
+  SetMetadata,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -81,6 +83,7 @@ export class AuthController {
     type: BadRequestException,
   })
   @ApiBearerAuth()
+  @SetMetadata('cacheBy', 'token')
   @Get('/user')
   public async getUser(@CurrentUser('id') userId: number) {
     const user = await this.userService.getUserById(userId);

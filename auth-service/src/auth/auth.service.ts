@@ -1,6 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { type User } from '@prisma/client';
+import { Cache } from 'cache-manager';
 import type { SignInRequest } from 'src/classes/auth/sign-in-request.class';
 import { TokenResponse } from 'src/classes/auth/token-response.class';
 import type { CreateUser } from 'src/classes/users/create-user.class';
