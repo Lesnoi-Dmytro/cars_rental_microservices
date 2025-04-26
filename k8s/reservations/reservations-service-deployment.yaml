@@ -28,7 +28,7 @@ spec:
               value: http://gateway:3000
             - name: RABBITMQ_URL
               value: amqp://user:password@rabbitmq:5672
-          image: reservations-service
+          image: cars_rental/reservations-service
           name: reservations-service
           imagePullPolicy: Never
           ports:

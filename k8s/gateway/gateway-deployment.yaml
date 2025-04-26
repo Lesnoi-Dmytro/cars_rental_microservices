@@ -30,7 +30,7 @@ spec:
               value: http://payment-service:3004
             - name: RESERVATIONS_SERVICE_URL
               value: http://reservations-service:3003
-          image: gateway
+          image: cars_rental/gateway
           name: gateway
           imagePullPolicy: Never
           ports:

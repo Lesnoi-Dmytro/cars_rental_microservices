@@ -6,7 +6,6 @@ import {
   HttpCode,
   Post,
   SetMetadata,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,

@@ -26,7 +26,7 @@ spec:
               value: postgresql://root:password@payment-postgres:5436/mydb
             - name: RABBITMQ_URL
               value: amqp://user:password@rabbitmq:5672
-          image: payment-service
+          image: cars_rental/payment-service
           name: payment-service
           imagePullPolicy: Never
           ports:
